@@ -28,7 +28,7 @@ function SignUp() {
   return (
     <div className="max-w-md mx-auto mt-10">
       <h2 className="text-3xl font-bold mb-6 text-center">Sign Up</h2>
-      {error && <p className="text-red-500 mb-4">{error}</p>}
+      {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="name" className="block mb-1">Name</label>
@@ -71,9 +71,14 @@ function SignUp() {
           {loading ? 'Creating account...' : 'Sign Up'}
         </button>
       </form>
+
       <p className="mt-4 text-center">
-        Already have an account? <Link to="/signin" className="text-blue-500 hover:underline">Sign In</Link>
+        Already have an account?{' '}
+        <Link to="/signin" className="text-blue-500 hover:underline">Sign In</Link>
       </p>
+
+      {/* Extra space to push footer down */}
+      <div className="h-16" />
     </div>
   );
 }

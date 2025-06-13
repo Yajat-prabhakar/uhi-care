@@ -51,11 +51,11 @@ function SignIn() {
   };
 
   const handleAdminLogin = () => {
-    window.open('http://localhost:5176', '_blank');
+    window.open('https://uhi-admin.netlify.app/', '_blank');
   };
 
   const handleDoctorLogin = () => {
-    window.open('http://localhost:5175', '_blank');
+    window.open('https://uhi-doc.netlify.app/', '_blank');
   };
 
   return (
@@ -65,7 +65,7 @@ function SignIn() {
       className="max-w-md mx-auto mt-10"
     >
       <h2 className="text-3xl font-bold mb-6 text-center">Sign In</h2>
-      {error && <p className="text-red-500 mb-4">{error}</p>}
+      {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -126,6 +126,9 @@ function SignIn() {
           Sign Up
         </Link>
       </p>
+
+      {/* Spacer to push footer down */}
+      <div className="h-16" />
     </motion.div>
   );
 }
