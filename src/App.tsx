@@ -72,143 +72,47 @@ function App() {
             >
               <Menu />
             </button>
-            <nav className={`${isMenuOpen ? 'block' : 'hidden'} md:block`}>
-              <ul className="md:flex space-y-2 md:space-y-0 md:space-x-6">
-                <li>
-                  <Link
-                    to="/"
-                    className="text-gray-700 hover:text-blue-600 transition-colors"
-                  >
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/about"
-                    className="text-gray-700 hover:text-blue-600 transition-colors"
-                  >
-                    About
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/blog"
-                    className="text-gray-700 hover:text-blue-600 transition-colors"
-                  >
-                    Blog
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/doctor-registration"
-                    className="text-gray-700 hover:text-blue-600 transition-colors"
-                  >
-                    Register as Doctor
-                  </Link>
-                </li>
-                <li>
-                  <a
-                    href="https://healthbot-uhi.netlify.app/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-700 hover:text-blue-600 transition-colors"
-                  >
-                    HealthBot
-                  </a>
-                </li>
-                {user && (
-                  <>
-                    <li>
-                      <Link
-                        to={
-                          user.role === 'doctor'
-                            ? '/doctor-dashboard'
-                            : '/dashboard'
-                        }
-                        className="text-gray-700 hover:text-blue-600 transition-colors"
-                      >
-                        Dashboard
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/doctors"
-                        className="text-gray-700 hover:text-blue-600 transition-colors"
-                      >
-                        Find Doctors
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/medicines"
-                        className="text-gray-700 hover:text-blue-600 transition-colors"
-                      >
-                        Medicines
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/lab-tests"
-                        className="text-gray-700 hover:text-blue-600 transition-colors"
-                      >
-                        Lab Tests
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/insurance"
-                        className="text-gray-700 hover:text-blue-600 transition-colors"
-                      >
-                        Insurance
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/MedNest"
-                        className="text-gray-700 hover:text-blue-600 transition-colors"
-                      >
-                        MedNest
-                      </Link>
-                    </li>
-                  </>
-                )}
-                {user ? (
-                  <li className="flex items-center space-x-4">
-                    <div className="flex items-center">
-                      <img
-                        src={user.avatar}
-                        alt={user.name}
-                        className="w-8 h-8 rounded-full mr-2"
-                      />
-                      <span>{user.name}</span>
-                    </div>
-                    {user.role === 'admin' && (
-                      <Link
-                        to="/admin"
-                        className="flex items-center text-blue-600 hover:text-blue-800 transition-colors"
-                      >
-                        <Settings className="w-4 h-4 mr-1" />
-                        Admin
-                      </Link>
-                    )}
-                    <button
-                      onClick={logout}
-                      className="text-red-600 hover:text-red-800 transition-colors"
-                    >
-                      Logout
-                    </button>
-                  </li>
-                ) : (
-                  <li>
-                    <Link
-                      to="/signin"
-                      className="text-gray-700 hover:text-blue-600 transition-colors"
-                    >
-                      Sign In / Sign Up
-                    </Link>
-                  </li>
-                )}
-              </ul>
+            <nav className="md:flex md:items-center md:space-x-6 space-y-2 md:space-y-0">
+              {/* Standalone Links */}
+              <Link to="/" className="text-gray-700 hover:text-blue-600 transition-colors">Home</Link>
+              <a href="https://uhi-medibot.netlify.app/" target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-blue-600 transition-colors">HealthBot</a>
+              <Link to="/doctors" className="text-gray-700 hover:text-blue-600 transition-colors">Find Doctor</Link>
+              <Link to="/mednest" className="text-gray-700 hover:text-blue-600 transition-colors">MedNest</Link>
+              {user && (
+                <Link to={user.role === 'doctor' ? "/doctor-dashboard" : "/dashboard"} className="text-gray-700 hover:text-blue-600 transition-colors">
+                  Dashboard
+                </Link>
+              )} 
+
+              {/* Logged-in User Profile + Menu */}
+              {user && (
+                <div className="relative group flex items-center space-x-2">
+                  <img
+                    src={"https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" || defaultAvatar}
+                    className="w-8 h-8 rounded-full mr-2 object-cover"
+                  />
+                  <span className="text-gray-700">{user.name}</span>
+
+                  <button className="text-gray-700 hover:text-blue-600">
+                    <Menu className="w-6 h-6" />
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  <ul className="absolute right-0 top-full mt-2 w-56 bg-white shadow-lg rounded-md opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 transform -translate-y-2 z-50">
+                    <li><Link to="/medicines" className="block px-4 py-2 text-gray-700 hover:bg-blue-100">Medicines</Link></li>
+                    <li><Link to="/lab-tests" className="block px-4 py-2 text-gray-700 hover:bg-blue-100">Lab Tests</Link></li>
+                    <li><Link to="/insurance" className="block px-4 py-2 text-gray-700 hover:bg-blue-100">Insurance</Link></li>
+                    <li><Link to="/doctor-registration" className="block px-4 py-2 text-gray-700 hover:bg-blue-100">Doctor Registration</Link></li>
+                    <li><Link to="/blog" className="block px-4 py-2 text-gray-700 hover:bg-blue-100">Blog</Link></li>
+                    <li><Link to="/about" className="block px-4 py-2 text-gray-700 hover:bg-blue-100">About</Link></li>
+                    <li><button onClick={logout} className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-100">Logout</button></li>
+                  </ul>
+                </div>
+              )}
+
+              {!user && (
+                <Link to="/signin" className="text-gray-700 hover:text-blue-600 transition-colors">Sign In / Sign Up</Link>
+              )}
             </nav>
           </div>
         </header>
