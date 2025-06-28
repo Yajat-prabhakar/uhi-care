@@ -1,25 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
-import { bookAppointment } from '../supabase';
- // ✅ use utility
-
-const doctorList = [
-  'Dr. Aisha Patel',
-  'Dr. Rajesh Kumar',
-  'Dr. Priya Singh',
-  'Dr. Sarah Johnson',
-  'Dr. Ahmed Khan',
-  'Dr. Lisa Chen',
-  'Dr. James Wilson',
-  'Dr. Maria Rodriguez',
-  'Dr. Sunil Mehta',
-  'Dr. Anjali Desai',
-  'Dr. Ravi Verma',
-  'Dr. Neha Sharma'
-];
+import { bookAppointment, fetchDoctors } from '../supabase';
 
 interface FormData {
   name: string;
@@ -50,6 +34,20 @@ function AppointmentBooking() {
     preferredMode: 'video',
     doctor_name: ''
   });
+
+  const [doctorList, setDoctorList] = useState<{ full_name: string }[]>([]);
+
+  useEffect(() => {
+    const loadDoctors = async () => {
+      try {
+        const doctors = await fetchDoctors();
+        setDoctorList(doctors);
+      } catch (err: any) {
+        toast.error('Failed to fetch doctors: ' + err.message);
+      }
+    };
+    loadDoctors();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,8 +97,8 @@ function AppointmentBooking() {
             required
           >
             <option value="">Select Doctor</option>
-            {doctorList.map((doc) => (
-              <option key={doc} value={doc}>{doc}</option>
+            {doctorList.map((doc, idx) => (
+              <option key={idx} value={doc.full_name}>{doc.full_name}</option>
             ))}
           </select>
         </div>

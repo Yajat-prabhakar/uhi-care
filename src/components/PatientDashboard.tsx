@@ -4,11 +4,12 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { toast } from 'react-toastify';
+import { supabase } from '../supabase';
 
 const PatientDashboard = () => {
   const { addToCart } = useCart();
 
-  const [appointments, setAppointments] = useState([]);
+  const [appointments, setAppointments] = useState<any[]>([]);
   const [prescriptionAvailable, setPrescriptionAvailable] = useState(false);
   const [prescriptionDownloaded, setPrescriptionDownloaded] = useState(false);
   const [labTestsFetched, setLabTestsFetched] = useState(false);
@@ -16,36 +17,72 @@ const PatientDashboard = () => {
   const [showAIReport, setShowAIReport] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => {
+    const alreadyFetched = localStorage.getItem('patientDashboardFetched');
+
+    if (!alreadyFetched) {
+      setTimeout(() => {
+        setPrescriptionAvailable(true);
+        setLabTestsFetched(true);
+        fetchAppointments();
+        toast.info("Prescription and Lab tests fetched.");
+        localStorage.setItem('patientDashboardFetched', 'true');
+      }, 1000);
+    } else {
       setPrescriptionAvailable(true);
       setLabTestsFetched(true);
-      fetchAppointment();
-      toast.info("Prescription and Lab tests fetched.");
-    }, 5000);
+      fetchAppointments();
+    }
   }, []);
 
-  const fetchAppointment = () => {
-    const newAppointments = [
-      {
-        id: Date.now(),
-        doctorName: 'Dr. MK Chaubey',
-        specialty: 'Cardiology',
-        date: '2025-06-14',
-        time: '05:00 PM',
-        type: 'video',
-        status: 'upcoming'
-      },
-      {
-        id: Date.now() + 1,
-        doctorName: 'Dr. MK Chaubey',
-        specialty: 'Cardiology',
-        date: '2025-06-16',
-        time: '09:00 AM',
-        type: 'video',
-        status: 'upcoming'
+  const fetchAppointments = async () => {
+    try {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        console.error('Error fetching user:', userError);
+        toast.error('Unable to get user info');
+        return;
       }
-    ];
-    setAppointments(newAppointments);
+
+      const { data, error } = await supabase
+        .from('Appointments')
+        .select('*')
+        .eq('email', user.email)
+        .order('date', { ascending: true });
+
+      if (error) {
+        console.error(error);
+        toast.error('Failed to fetch appointments');
+      } else {
+        setAppointments(data);
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to fetch appointments');
+    }
+  };
+
+  const handleCancelAppointment = async (appointmentId: number) => {
+    try {
+      const { error } = await supabase
+        .from('Appointments')
+        .delete()
+        .eq('id', appointmentId);
+
+      if (error) {
+        console.error(error);
+        toast.error('Failed to cancel appointment');
+      } else {
+        setAppointments(prev => prev.filter(appt => appt.id !== appointmentId));
+        toast.success('Appointment cancelled successfully');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Error cancelling appointment');
+    }
   };
 
   const downloadPrescription = async () => {
@@ -105,14 +142,34 @@ const PatientDashboard = () => {
             <p className="text-gray-500">No upcoming appointments</p>
           ) : (
             appointments.map(appt => (
-              <div key={appt.id}>
-                <p className="font-semibold">{appt.doctorName} - {appt.specialty}</p>
+              <div key={appt.id} className="mb-4 border-b pb-2">
+                <p className="font-semibold">{appt.doctor_name} - {appt.specialty}</p>
                 <p className="text-sm text-gray-600">{appt.date} at {appt.time}</p>
-                {appt.type === 'video' && (
-                  <Link to={`/video-call/${appt.id}`} className="text-green-600 hover:underline text-sm">
-                    Join Video Call
-                  </Link>
-                )}
+                <div className="flex flex-col gap-1 mt-1">
+                  {appt.preferred_mode === 'video' ? (
+                    <Link
+                      to={`/video-call/${appt.id}`}
+                      className="text-green-600 hover:underline text-sm w-fit"
+                    >
+                      Join Video Call
+                    </Link>
+                  ) : appt.preferred_mode === 'in-person' ? (
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(appt.location || 'hospital')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline text-sm w-fit"
+                    >
+                      View on Map
+                    </a>
+                  ) : null}
+                  <button
+                    onClick={() => handleCancelAppointment(appt.id)}
+                    className="text-red-500 hover:underline text-sm w-fit"
+                  >
+                    Cancel Appointment
+                  </button>
+                </div>
               </div>
             ))
           )}
@@ -140,7 +197,7 @@ const PatientDashboard = () => {
           )}
         </motion.div>
 
-        {/* Lab Test Info */}
+        {/* Lab Tests */}
         <motion.div whileHover={{ scale: 1.02 }} className="bg-white p-6 rounded-lg shadow-md">
           <MapPin className="w-8 h-8 text-blue-500 mb-2" />
           <h3 className="text-xl font-semibold mb-2">Upcoming Lab Tests</h3>
@@ -148,10 +205,15 @@ const PatientDashboard = () => {
             <p className="text-gray-500">No lab tests booked</p>
           ) : (
             <>
-              <p className="text-gray-700">2 tests scheduled at <strong>HOD </strong></p>
+              <p className="text-gray-700">2 tests scheduled at <strong>HOD</strong></p>
               <p className="text-sm text-gray-600">Date: 2025-06-16</p>
               <p className="text-sm text-gray-600">Time: 12:00 PM</p>
-              <a href="https://www.google.com/maps/dir//HOD+Blood+Test+Centre,+Shop+No-1,+Ground+Floor,+C-1%2F49,+Sector+5,+Rohini,+New+Delhi,+Delhi+110085" target="_blank" rel="noopener noreferrer" className="inline-block mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+              <a
+                href="https://www.google.com/maps/dir//HOD+Blood+Test+Centre,+Shop+No-1,+Ground+Floor,+C-1%2F49,+Sector+5,+Rohini,+New+Delhi,+Delhi+110085"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
                 View on Google Maps
               </a>
             </>
@@ -159,7 +221,7 @@ const PatientDashboard = () => {
         </motion.div>
       </div>
 
-      {/* Analytics & AI Analysis */}
+      {/* AI Health Analytics */}
       <motion.div whileHover={{ scale: 1.01 }} className="bg-white p-6 rounded-lg shadow-md mt-6">
         <div className="flex items-center gap-2 mb-4">
           <BarChart2 className="w-6 h-6 text-purple-500" />
@@ -186,21 +248,7 @@ const PatientDashboard = () => {
           <div className="mt-4 text-sm text-gray-800 space-y-2">
             <p><strong>AI Summary:</strong></p>
             <p>
-              Based on your latest vitals and prescription data, your cardiac health appears to be stable.
-              Your average blood pressure reading of 120/80 mmHg is within the optimal range, indicating
-              a healthy circulatory system. Your heart rate of 72 bpm is also normal, suggesting effective
-              cardiovascular performance without signs of arrhythmia or stress-related elevation.
-            </p>
-            <p>
-              Cholesterol levels are well-managed at 180 mg/dL, reducing the risk of plaque buildup in
-              arteries. Your prescribed medications are consistent with maintenance therapy for individuals
-              with prior cardiovascular concerns, such as Angispan TR for chest pain and Lipvas to control
-              cholesterol.
-            </p>
-            <p>
-              Overall, your current regimen is helping maintain a balanced cardiac profile. Continue regular
-              monitoring and follow-up with your cardiologist, maintain a heart-friendly diet, and ensure
-              consistent physical activity to support long-term health outcomes.
+              Based on your latest vitals and prescription data, your cardiac health appears to be stable...
             </p>
             <p className="text-right italic text-xs text-gray-500 mt-2">— Powered by MediBot by UHI Care</p>
           </div>

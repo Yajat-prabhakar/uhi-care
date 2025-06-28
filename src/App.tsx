@@ -40,6 +40,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import Checkout from './components/Checkout';
 import BookingConfirmation from './components/BookingConfirmation';
+import MedNest from './components/MedNest'; // ✅ NEW IMPORT
 
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -58,7 +59,7 @@ function App() {
       <div className="min-h-screen bg-gray-100">
         <ToastContainer position="top-right" autoClose={3000} />
         <header className="bg-white shadow-md">
-          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="mx-auto px-4 py-4 flex justify-between items-center">
             <Link
               to="/"
               className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors"
@@ -161,6 +162,14 @@ function App() {
                         Insurance
                       </Link>
                     </li>
+                    <li>
+                      <Link
+                        to="/MedNest"
+                        className="text-gray-700 hover:text-blue-600 transition-colors"
+                      >
+                        MedNest
+                      </Link>
+                    </li>
                   </>
                 )}
                 {user ? (
@@ -204,7 +213,7 @@ function App() {
           </div>
         </header>
 
-        <main className="container mx-auto px-4 py-8">
+        <main className="mx-auto px-4 py-8">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
@@ -228,6 +237,7 @@ function App() {
             <Route path="/insurance" element={<PrivateRoute><Insurance /></PrivateRoute>} />
             <Route path="/ambulance" element={<PrivateRoute><Ambulance /></PrivateRoute>} />
             <Route path="/emergency-contacts" element={<PrivateRoute><EmergencyContacts /></PrivateRoute>} />
+            <Route path="/mednest" element={<MedNest />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/admin/*" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
@@ -264,3 +274,4 @@ function AppWrapper() {
 }
 
 export default AppWrapper;
+
