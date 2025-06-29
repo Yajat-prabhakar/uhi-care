@@ -11,4 +11,4 @@ Links to our bot and other repo
 9. https://github.com/vrinii824/uhi-reminder
 10. https://github.com/vrinii824/uhi-tracker
 11. https://github.com/vrinii824/uhi-ZenNap
-12. https://github.com/vrinii824/uhi-predictorx @918076684591
+12. https://github.com/vrinii824/uhi-predictorx 
