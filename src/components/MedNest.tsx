@@ -35,20 +35,32 @@ const tools = [
     name: "Recovery Planner",
     description: "Recover faster—get actionable tasks based on your diagnosis.",
     image: "https://i.postimg.cc/0NDY7Bx8/Chat-GPT-Image-Jun-27-2025-03-14-10-PM.png",
-    link: "/tools/recovery-planner"
+    link: "https://uhi-recovery.netlify.app/"
   },
   {
     name: "UHI Health Tracker",
     description: "Track sleep, stress & activity with a daily Health Score and coaching tips.",
     image: "https://i.postimg.cc/t4GbkBVr/Chat-GPT-Image-Jun-27-2025-03-17-10-PM.png",
-    link: "/tools/uhi-tracker"
+    link: "https://uhi-health.netlify.app/"
   },
   {
     name: "Equilibrium",
     description: "Monitor burnout levels daily. An empathetic AI helps you find balance.",
     image: "https://i.postimg.cc/63CdxwXv/Chat-GPT-Image-Jun-27-2025-03-22-31-PM.png",
     link: "https://uhi-equilibrium.netlify.app/"
-  }
+  },
+  {
+    name: "BillSfit",
+    description: "BillSift promotes billing transparency and accountability by analyzing your medical bills for potential errors like overcharges and duplicate services.",
+    image: "https://i.postimg.cc/521jSZm8/Screenshot-2025-06-29-090013.png",
+    link: "https://uhi-billsift.netlify.app/"
+  },
+  {
+    name: "Dream DeCoder",
+    description: "Dream Decoder is an AI-powered web app that analyzes your dreams to reveal emotional themes, key symbols, and personalized insights for self-reflection.",
+    image: "https://i.postimg.cc/9fQMvZKM/Screenshot-7.png",
+    link: "https://uhi-dream.netlify.app/"
+  },
 ];
 
 const MedNest = () => {

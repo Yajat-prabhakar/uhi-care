@@ -1,5 +1,5 @@
 // import React, { useState, useEffect } from 'react';
-// import { Calendar, Activity, MapPin, BarChart2 } from 'lucide-react';
+// import { Calendar, Activity, MapPin, User } from 'lucide-react';
 // import { motion } from 'framer-motion';
 // import { Link } from 'react-router-dom';
 // import { useCart } from '../context/CartContext';
@@ -13,11 +13,30 @@
 //   const [prescriptionAvailable, setPrescriptionAvailable] = useState(false);
 //   const [prescriptionDownloaded, setPrescriptionDownloaded] = useState(false);
 //   const [labTestsFetched, setLabTestsFetched] = useState(false);
-//   const [aiLoading, setAiLoading] = useState(false);
-//   const [showAIReport, setShowAIReport] = useState(false);
+//   const [userProfile, setUserProfile] = useState<any>(null);
 
 //   useEffect(() => {
 //     const alreadyFetched = localStorage.getItem('patientDashboardFetched');
+
+//     const fetchUserData = async () => {
+//       const {
+//         data: { user },
+//         error: userError,
+//       } = await supabase.auth.getUser();
+
+//       if (userError || !user) {
+//         console.error('Error fetching user:', userError);
+//         toast.error('Unable to get user info');
+//         return;
+//       }
+
+//       setUserProfile({
+//         name: user.user_metadata?.full_name || 'Patient',
+//         email: user.email,
+//       });
+//     };
+
+//     fetchUserData();
 
 //     if (!alreadyFetched) {
 //       setTimeout(() => {
@@ -118,20 +137,18 @@
 //     toast.success('Prescription medicines added to cart!');
 //   };
 
-//   const handleAIAnalysis = () => {
-//     setAiLoading(true);
-//     setShowAIReport(false);
-//     setTimeout(() => {
-//       setAiLoading(false);
-//       setShowAIReport(true);
-//     }, 5000);
-//   };
-
 //   return (
-//     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative space-y-6 p-6">
-//       <div className="flex justify-between items-center">
-//         <h2 className="text-3xl font-semibold">Patient Dashboard</h2>
-//       </div>
+//     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 p-6">
+//       <h2 className="text-3xl font-bold">Patient Dashboard</h2>
+
+//       {/* Profile Card */}
+//       <motion.div whileHover={{ scale: 1.01 }} className="bg-white p-6 rounded-lg shadow-md flex gap-6 items-center">
+//         <User className="w-16 h-16 text-yellow-500" />
+//         <div>
+//           <h3 className="text-xl font-bold">{userProfile?.name || 'Patient'}</h3>
+//           <p>Email: {userProfile?.email}</p>
+//         </div>
+//       </motion.div>
 
 //       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 //         {/* Appointments */}
@@ -147,8 +164,8 @@
 //                 <p className="text-sm text-gray-600">{appt.date} at {appt.time}</p>
 //                 <div className="flex flex-col gap-1 mt-1">
 //                   {appt.preferred_mode === 'video' ? (
-//                     <Link
-//                       to={`/video-call/${appt.id}`}
+//                     <Link 
+//                       to={'https://uhivc.netlify.app/'}
 //                       className="text-green-600 hover:underline text-sm w-fit"
 //                     >
 //                       Join Video Call
@@ -220,40 +237,6 @@
 //           )}
 //         </motion.div>
 //       </div>
-
-//       {/* AI Health Analytics */}
-//       <motion.div whileHover={{ scale: 1.01 }} className="bg-white p-6 rounded-lg shadow-md mt-6">
-//         <div className="flex items-center gap-2 mb-4">
-//           <BarChart2 className="w-6 h-6 text-purple-500" />
-//           <h3 className="text-xl font-semibold">Health Analytics</h3>
-//         </div>
-//         <ul className="list-disc list-inside text-sm text-gray-700 mb-4">
-//           <li>Last visit: June 1, 2025</li>
-//           <li>Avg. BP: 120/80 mmHg</li>
-//           <li>Cholesterol: 180 mg/dL</li>
-//           <li>Heart Rate: 72 bpm</li>
-//         </ul>
-//         <button
-//           onClick={handleAIAnalysis}
-//           className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
-//         >
-//           Detailed Analysis
-//         </button>
-
-//         {aiLoading && (
-//           <p className="mt-4 text-sm text-gray-500 italic">MediBot is analyzing your health data...</p>
-//         )}
-
-//         {showAIReport && (
-//           <div className="mt-4 text-sm text-gray-800 space-y-2">
-//             <p><strong>AI Summary:</strong></p>
-//             <p>
-//               Based on your latest vitals and prescription data, your cardiac health appears to be stable...
-//             </p>
-//             <p className="text-right italic text-xs text-gray-500 mt-2">— Powered by MediBot by UHI Care</p>
-//           </div>
-//         )}
-//       </motion.div>
 //     </motion.div>
 //   );
 // };
@@ -261,7 +244,7 @@
 // export default PatientDashboard;
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, Activity, MapPin } from 'lucide-react';
+import { Calendar, Activity, MapPin, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
@@ -275,7 +258,7 @@ const PatientDashboard = () => {
   const [prescriptionAvailable, setPrescriptionAvailable] = useState(false);
   const [prescriptionDownloaded, setPrescriptionDownloaded] = useState(false);
   const [labTestsFetched, setLabTestsFetched] = useState(false);
-  const [userProfile, setUserProfile] = useState<{ name: string; email: string } | null>(null);
+  const [userProfile, setUserProfile] = useState<any>(null);
 
   useEffect(() => {
     const alreadyFetched = localStorage.getItem('patientDashboardFetched');
@@ -305,7 +288,7 @@ const PatientDashboard = () => {
         setPrescriptionAvailable(true);
         setLabTestsFetched(true);
         fetchAppointments();
-        toast.info("Prescription and Lab tests fetched.");
+        toast.info('Prescription and Lab tests fetched.');
         localStorage.setItem('patientDashboardFetched', 'true');
       }, 1000);
     } else {
@@ -328,7 +311,7 @@ const PatientDashboard = () => {
         return;
       }
 
-      const { data, error } = await supabase
+      const { data: appointmentsData, error } = await supabase
         .from('Appointments')
         .select('*')
         .eq('email', user.email)
@@ -337,9 +320,28 @@ const PatientDashboard = () => {
       if (error) {
         console.error(error);
         toast.error('Failed to fetch appointments');
-      } else {
-        setAppointments(data);
+        return;
       }
+
+      // For each appointment, fetch the VC ID from the doctors table
+      const enrichedAppointments = await Promise.all(
+        appointmentsData.map(async (appt: any) => {
+          const { data: doctorData, error: doctorError } = await supabase
+            .from('doctors')
+            .select('vc')
+            .eq('full_name', appt.doctor_name)
+            .single();
+
+          if (doctorError) {
+            console.warn(`Could not fetch VC ID for doctor ${appt.doctor_name}`);
+            return appt;
+          }
+
+          return { ...appt, doctorVC: doctorData?.vc };
+        })
+      );
+
+      setAppointments(enrichedAppointments);
     } catch (err) {
       console.error(err);
       toast.error('Failed to fetch appointments');
@@ -400,25 +402,18 @@ const PatientDashboard = () => {
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative space-y-6 p-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-semibold">Patient Dashboard</h2>
-      </div>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 p-6">
+      <h2 className="text-3xl font-bold">Patient Dashboard</h2>
 
-      {/* Profile Section */}
-      <motion.div whileHover={{ scale: 1.01 }} className="bg-white p-6 rounded-lg shadow-md flex items-center gap-6">
-        <img
-          src="https://www.gravatar.com/avatar/?d=mp"
-          alt="Profile"
-          className="w-20 h-20 rounded-full object-cover"
-        />
+      {/* Profile Card */}
+      <motion.div whileHover={{ scale: 1.01 }} className="bg-white p-6 rounded-lg shadow-md flex gap-6 items-center">
+        <User className="w-16 h-16 text-yellow-500" />
         <div>
-          <h3 className="text-xl font-semibold">{userProfile?.name || 'Loading...'}</h3>
-          <p className="text-sm text-gray-600">{userProfile?.email || ''}</p>
+          <h3 className="text-xl font-bold">{userProfile?.name || 'Patient'}</h3>
+          <p>Email: {userProfile?.email}</p>
         </div>
       </motion.div>
 
-      {/* Grid Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Appointments */}
         <motion.div whileHover={{ scale: 1.02 }} className="bg-white p-6 rounded-lg shadow-md">
@@ -429,19 +424,28 @@ const PatientDashboard = () => {
           ) : (
             appointments.map(appt => (
               <div key={appt.id} className="mb-4 border-b pb-2">
-                <p className="font-semibold">{appt.doctor_name} - {appt.specialty}</p>
-                <p className="text-sm text-gray-600">{appt.date} at {appt.time}</p>
+                <p className="font-semibold">
+                  {appt.doctor_name} - {appt.specialty}
+                </p>
+                {appt.doctorVC && (
+                  <p className="text-sm text-gray-600">VC ID: {appt.doctorVC}</p>
+                )}
+                <p className="text-sm text-gray-600">
+                  {appt.date} at {appt.time}
+                </p>
                 <div className="flex flex-col gap-1 mt-1">
                   {appt.preferred_mode === 'video' ? (
-                    <Link 
-                      to={'https://uhivc.netlify.app/'}
+                    <Link
+                      to="https://uhivc.netlify.app/"
                       className="text-green-600 hover:underline text-sm w-fit"
                     >
                       Join Video Call
                     </Link>
                   ) : appt.preferred_mode === 'in-person' ? (
                     <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(appt.location || 'hospital')}`}
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                        appt.location || 'hospital'
+                      )}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:underline text-sm w-fit"
@@ -472,11 +476,17 @@ const PatientDashboard = () => {
               <p className="text-sm text-gray-600">Date Issued: 2025-06-05</p>
               <p className="text-sm text-gray-600">Time: 12:00 PM</p>
               {!prescriptionDownloaded && (
-                <button onClick={downloadPrescription} className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                <button
+                  onClick={downloadPrescription}
+                  className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                >
                   Download Prescription
                 </button>
               )}
-              <button onClick={orderMedicines} className="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+              <button
+                onClick={orderMedicines}
+                className="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+              >
                 Order Medicines
               </button>
             </div>
